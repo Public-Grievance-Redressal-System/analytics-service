@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/analytics")
+@CrossOrigin
 public class AnalyticsController {
-
     @Autowired
     private AnalyticsService analyticsService;
     @GetMapping
@@ -28,9 +29,8 @@ public class AnalyticsController {
         ResponseEntity<String> responseEntity = new ResponseEntity("API works", HttpStatus.OK);
         return responseEntity;
     }
-
     @GetMapping("/metrics/tickets")
-    public List<Ticket> fetchTickets(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id, @RequestParam TicketStatus status){
+    public Map<String, Long> fetchTickets(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id, @RequestParam TicketStatus status){
         return analyticsService.getTicketsBasedOnStatus(from,to,rangeFrequency,department_id,region_id,status);
     }
 }

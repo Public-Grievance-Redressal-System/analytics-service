@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@Service("mockUserService")
 public class MockUserService implements ExternalUserService {
 
     @Override

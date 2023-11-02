@@ -8,8 +8,9 @@ import com.grievanceredressalsystem.analyticsservice.models.RangeFrequency;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface AnalyticsService {
-    public List<Ticket> getTicketsBasedOnStatus(Date startDate, Date endDate , RangeFrequency frequency, UUID department_id , UUID region_id, TicketStatus status);
+    public Map<String, Long> getTicketsBasedOnStatus(Date startDate, Date endDate , RangeFrequency frequency, UUID department_id , UUID region_id, TicketStatus status);
 }

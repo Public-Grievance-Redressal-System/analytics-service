@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.grievanceredressalsystem.analyticsservice.mock.models.*;
 import com.grievanceredressalsystem.analyticsservice.services.ExternalTicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,8 +12,11 @@ import java.util.*;
 @Service
 public class MockTicketService implements ExternalTicketService {
 
-    @Autowired
     private static MockUserService mockUserService;
+
+    public MockTicketService(@Qualifier("mockUserService") MockUserService mockUserService) {
+        mockUserService = mockUserService;
+    }
 
     private static List<Department> departments;
     private static List<Region> regions;
@@ -24,7 +28,7 @@ public class MockTicketService implements ExternalTicketService {
         createRandomDepartments(5);
         createRandomRegions(5);
         createRandomRedressors(5);
-        for(int i=0;i<50;i++){
+        for(int i=0;i<100;i++){
             tickets.add(createRandomOpenTicket());
         }
         randomlyResolveTickets(tickets);
@@ -66,7 +70,7 @@ public class MockTicketService implements ExternalTicketService {
         long oneWeekInMillis = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
         long oneDayInMillis = 24 * 60 * 60 * 1000; // 1 Day in milliseconds
         long oneMonthInMillis = 28L * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-        ticket.setOpened_date_time(Faker.instance().date().between(new Date(now.getTime()-oneDayInMillis),now));
+        ticket.setOpened_date_time(Faker.instance().date().between(new Date(now.getTime()-oneMonthInMillis),now));
         ticket.setClosing_date_time(Faker.instance().date().between(now,new Date(now.getTime()+oneDayInMillis)));
         ticket.setDepartment(departments.get(random.nextInt(departments.size())));
         ticket.setRegion(regions.get(random.nextInt(regions.size())));
@@ -83,8 +87,8 @@ public class MockTicketService implements ExternalTicketService {
         Date now = new Date();
         long oneWeekInMillis = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
         long oneDayInMillis = 24 * 60 * 60 * 1000; // 1 Day in milliseconds
-        long oneMonthInMillis = 28L * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-        ticket.setOpened_date_time(Faker.instance().date().between(new Date(now.getTime()-oneDayInMillis),now));
+        long oneMonthInMillis = 28L * 24 * 60 * 60 * 1000; // 1 month in milliseconds
+        ticket.setOpened_date_time(Faker.instance().date().between(new Date(now.getTime()-12*oneMonthInMillis),now));
         ticket.setDepartment(departments.get(random.nextInt(departments.size())));
         ticket.setRegion(regions.get(random.nextInt(regions.size())));
         ticket.setStatus(TicketStatus.OPEN);
