@@ -13,4 +13,5 @@ import java.util.UUID;
 
 public interface AnalyticsService {
     public Map<String, Long> getTicketsBasedOnStatus(Date startDate, Date endDate , RangeFrequency frequency, UUID department_id , UUID region_id, TicketStatus status);
+    public Map<String,Double> getAverageResolutionTime(Date startDate, Date endDate , RangeFrequency frequency, UUID department_id , UUID region_id);
 }

@@ -33,4 +33,9 @@ public class AnalyticsController {
     public Map<String, Long> fetchTickets(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id, @RequestParam TicketStatus status){
         return analyticsService.getTicketsBasedOnStatus(from,to,rangeFrequency,department_id,region_id,status);
     }
+
+    @GetMapping("/metrics/average-resolution-time")
+    public Map<String, Double> fetchAverageResolutionTime(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id){
+        return analyticsService.getAverageResolutionTime(from,to,rangeFrequency,department_id,region_id);
+    }
 }

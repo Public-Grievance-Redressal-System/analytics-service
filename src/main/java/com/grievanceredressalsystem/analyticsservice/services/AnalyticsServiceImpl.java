@@ -55,7 +55,6 @@ public class AnalyticsServiceImpl implements AnalyticsService{
                     .collect(Collectors.toList());
         }
 
-        List<Integer> ticketResponse = new ArrayList<>();
         Map<String, Long> counts = new TreeMap<>(new StringDateComparator());
 
         if(frequency == RangeFrequency.DAILY){
@@ -88,8 +87,61 @@ public class AnalyticsServiceImpl implements AnalyticsService{
                     ));
             counts.putAll(yearlyCounts);
         }
-        System.out.println(counts);
-//        System.out.println(tickets);
         return counts;
     }
+
+    @Override
+    public Map<String, Double> getAverageResolutionTime(Date startDate, Date endDate, RangeFrequency frequency, UUID department_id, UUID region_id) {
+        List<Ticket> tickets = ticketService.getTickets();
+        // filter tickets with Resolved status
+        List<Ticket> filteredTickets = tickets.stream()
+                .filter(ticket -> TicketStatus.RESOLVED.equals(ticket.getStatus())
+                        && isDateInRange(ticket.getClosing_date_time(), startDate, endDate))
+                .collect(Collectors.toList());
+        if(department_id!=null) {
+            filteredTickets = filteredTickets.stream()
+                    .filter(ticket -> department_id.equals(ticket.getDepartment().getDepartment_id()))
+                    .collect(Collectors.toList());
+        }
+        if(region_id!=null){
+            filteredTickets = filteredTickets.stream()
+                    .filter(ticket -> region_id.equals(ticket.getRegion().getRegion_id()))
+                    .collect(Collectors.toList());
+        }
+
+        Map<String, Double> counts = new TreeMap<>(new StringDateComparator());
+
+        if(frequency == RangeFrequency.DAILY){
+            // Group and calculate average time to resolve by day (ignoring time just while grouping)
+            Map<String, Double> dailyCounts = filteredTickets.stream()
+                    .collect(Collectors.groupingBy(
+                            ticket -> new SimpleDateFormat("dd/MM/yyyy").format(truncateTime(ticket.getClosing_date_time())),
+                            Collectors.averagingLong((ticket)->(ticket.getClosing_date_time().getTime() - ticket.getOpened_date_time().getTime())/60000)
+                    ));
+            counts.putAll(dailyCounts);
+        }
+        if(frequency==RangeFrequency.MONTHLY){
+            // Group and calculate average time to resolve by month (MM/yyyy, ignoring time)
+            Map<String, Double> monthlyCounts = filteredTickets.stream()
+                    .collect(Collectors.groupingBy(
+                            ticket -> new SimpleDateFormat("MM/yyyy").format(truncateTime(ticket.getClosing_date_time())),
+                            Collectors.averagingLong((ticket)->(ticket.getClosing_date_time().getTime() - ticket.getOpened_date_time().getTime())/60000)
+                    ));
+            counts.putAll(monthlyCounts);
+        }
+        if(frequency == RangeFrequency.YEARLY){
+            Map<String, Double> yearlyCounts = filteredTickets.stream()
+                    .collect(Collectors.groupingBy(
+                            ticket -> {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(truncateTime(ticket.getClosing_date_time()));
+                                return Integer.toString(cal.get(Calendar.YEAR));
+                            },
+                            Collectors.averagingLong((ticket)->(ticket.getClosing_date_time().getTime() - ticket.getOpened_date_time().getTime())/60000)
+                    ));
+            counts.putAll(yearlyCounts);
+        }
+        return counts;
+    }
+
 }
