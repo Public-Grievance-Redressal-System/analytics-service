@@ -28,10 +28,13 @@ public class MockTicketService implements ExternalTicketService {
         createRandomDepartments(5);
         createRandomRegions(5);
         createRandomRedressors(5);
+//        for(int i=0;i<100;i++){
+//            tickets.add(createRandomOpenTicket());
+//        }
+//        randomlyResolveTickets(tickets);
         for(int i=0;i<100;i++){
-            tickets.add(createRandomOpenTicket());
+            tickets.add(createRandomResolvedTicket());
         }
-        randomlyResolveTickets(tickets);
         return tickets;
     }
 
@@ -71,7 +74,7 @@ public class MockTicketService implements ExternalTicketService {
         long oneDayInMillis = 24 * 60 * 60 * 1000; // 1 Day in milliseconds
         long oneMonthInMillis = 28L * 24 * 60 * 60 * 1000; // 7 days in milliseconds
         ticket.setOpened_date_time(Faker.instance().date().between(new Date(now.getTime()-oneMonthInMillis),now));
-        ticket.setClosing_date_time(Faker.instance().date().between(now,new Date(now.getTime()+oneDayInMillis)));
+        ticket.setClosing_date_time(Faker.instance().date().between(ticket.getOpened_date_time(),new Date(ticket.getOpened_date_time().getTime()+oneDayInMillis/4)));
         ticket.setDepartment(departments.get(random.nextInt(departments.size())));
         ticket.setRegion(regions.get(random.nextInt(regions.size())));
         ticket.setStatus(TicketStatus.RESOLVED);
@@ -104,7 +107,7 @@ public class MockTicketService implements ExternalTicketService {
         long oneMonthInMillis = 28L * 24 * 60 * 60 * 1000; // 7 days in milliseconds
         for(int i=0;i<tickets.size()/2;i++){
             Ticket ticket = tickets.get(random.nextInt(tickets.size()));
-            ticket.setClosing_date_time(Faker.instance().date().between(now,new Date(now.getTime()+oneDayInMillis)));
+            ticket.setClosing_date_time(Faker.instance().date().between(ticket.getOpened_date_time(),new Date(ticket.getOpened_date_time().getTime()+oneDayInMillis/4)));
             ticket.setStatus(TicketStatus.RESOLVED);
         }
     }
