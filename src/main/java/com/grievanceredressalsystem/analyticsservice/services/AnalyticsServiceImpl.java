@@ -1,16 +1,23 @@
 package com.grievanceredressalsystem.analyticsservice.services;
 
-import com.grievanceredressalsystem.analyticsservice.mock.models.Department;
-import com.grievanceredressalsystem.analyticsservice.mock.models.Region;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Ticket;
 import com.grievanceredressalsystem.analyticsservice.mock.models.TicketStatus;
-import com.grievanceredressalsystem.analyticsservice.mock.services.MockTicketService;
+import com.grievanceredressalsystem.analyticsservice.models.MetricType;
 import com.grievanceredressalsystem.analyticsservice.models.RangeFrequency;
 import com.grievanceredressalsystem.analyticsservice.utils.StringDateComparator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,12 +51,12 @@ public class AnalyticsServiceImpl implements AnalyticsService{
                         && isDateInRange(ticket.getOpened_date_time(), startDate, endDate))
                 .collect(Collectors.toList());
 
-        if(department_id!=null) {
+        if(department_id!=null && !department_id.equals("")) {
             filteredTickets = filteredTickets.stream()
                     .filter(ticket -> department_id.equals(ticket.getDepartment().getDepartment_id()))
                     .collect(Collectors.toList());
         }
-        if(region_id!=null){
+        if(region_id!=null && !region_id.equals("")){
             filteredTickets = filteredTickets.stream()
                     .filter(ticket -> region_id.equals(ticket.getRegion().getRegion_id()))
                     .collect(Collectors.toList());
@@ -98,12 +105,12 @@ public class AnalyticsServiceImpl implements AnalyticsService{
                 .filter(ticket -> TicketStatus.RESOLVED.equals(ticket.getStatus())
                         && isDateInRange(ticket.getClosing_date_time(), startDate, endDate))
                 .collect(Collectors.toList());
-        if(department_id!=null) {
+        if(department_id!=null && !department_id.equals("")) {
             filteredTickets = filteredTickets.stream()
                     .filter(ticket -> department_id.equals(ticket.getDepartment().getDepartment_id()))
                     .collect(Collectors.toList());
         }
-        if(region_id!=null){
+        if(region_id!=null && !region_id.equals("")){
             filteredTickets = filteredTickets.stream()
                     .filter(ticket -> region_id.equals(ticket.getRegion().getRegion_id()))
                     .collect(Collectors.toList());
@@ -144,4 +151,54 @@ public class AnalyticsServiceImpl implements AnalyticsService{
         return counts;
     }
 
+    public ResponseEntity<String> generateReport(MetricType metricType, Date startDate, Date endDate, RangeFrequency frequency, UUID department_id, UUID region_id, TicketStatus status) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet(String.valueOf(metricType));
+        Row headerRow = sheet.createRow(0);
+        List<String> headers = new ArrayList<>();
+
+        if(metricType == MetricType.TicketBasedOnStatus){
+            Map<String, Long> tickets = getTicketsBasedOnStatus(startDate,endDate,frequency,department_id,region_id,status);
+            headers.add("Date");
+            headers.add("Tickets Based on Status");
+            for(int col=0;col<headers.size();col++) {
+                Cell cell = headerRow.createCell(col);
+                cell.setCellValue(headers.get(col));
+            }
+            int rowIdx = 1;
+            for(String key:tickets.keySet()){
+                Row row = sheet.createRow(rowIdx);
+                row.createCell(0).setCellValue(key);
+                row.createCell(1).setCellValue(tickets.get(key));
+                rowIdx++;
+            }
+        } else if (metricType == MetricType.AverageUserRating) {
+            Map<String, Double> tickets = getAverageResolutionTime(startDate,endDate,frequency,department_id,region_id);
+            headers.add("Date");
+            headers.add("Average Resolution Time");
+            for(int col=0;col<headers.size();col++) {
+                Cell cell = headerRow.createCell(col);
+                cell.setCellValue(headers.get(col));
+            }
+            int rowIdx = 1;
+            for(String key:tickets.keySet()){
+                Row row = sheet.createRow(rowIdx);
+                row.createCell(0).setCellValue(key);
+                row.createCell(1).setCellValue(tickets.get(key));
+                rowIdx++;
+            }
+        }
+        String folderpath = "C:\\Users\\vatsa\\Documents\\projects\\Spring_Boot_Projects\\GrievenceRedressal\\anlytics_service_generated_reports\\";
+        Date now = new Date();
+        String currDate = now.toString().replaceAll("[\\s:]", "");
+        String filepath = folderpath+"Report_"+metricType.toString()+currDate+".xlsx";
+        System.out.println(filepath);
+        File file = new File(filepath);
+        file.createNewFile();
+        FileOutputStream out = new FileOutputStream(file);
+        workbook.write(out);
+        out.close();
+        ResponseEntity<String> responseEntity = new ResponseEntity<>(filepath, HttpStatus.OK);
+        return responseEntity;
+    }
 }

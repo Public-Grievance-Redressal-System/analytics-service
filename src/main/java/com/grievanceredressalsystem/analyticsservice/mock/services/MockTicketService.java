@@ -28,10 +28,9 @@ public class MockTicketService implements ExternalTicketService {
         createRandomDepartments(5);
         createRandomRegions(5);
         createRandomRedressors(5);
-//        for(int i=0;i<100;i++){
-//            tickets.add(createRandomOpenTicket());
-//        }
-//        randomlyResolveTickets(tickets);
+        for(int i=0;i<100;i++){
+            tickets.add(createRandomOpenTicket());
+        }
         for(int i=0;i<100;i++){
             tickets.add(createRandomResolvedTicket());
         }

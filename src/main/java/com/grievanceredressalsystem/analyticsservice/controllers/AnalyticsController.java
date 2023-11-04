@@ -1,5 +1,6 @@
 package com.grievanceredressalsystem.analyticsservice.controllers;
 
+import com.grievanceredressalsystem.analyticsservice.dtos.GenerateReportDTO;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Department;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Region;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Ticket;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,5 +40,10 @@ public class AnalyticsController {
     @GetMapping("/metrics/average-resolution-time")
     public Map<String, Double> fetchAverageResolutionTime(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id){
         return analyticsService.getAverageResolutionTime(from,to,rangeFrequency,department_id,region_id);
+    }
+
+    @PostMapping("/generate-report")
+    public ResponseEntity<String> generateReport(@RequestBody GenerateReportDTO generateReportDTO) throws IOException {
+        return analyticsService.generateReport(generateReportDTO.getMetricType(),generateReportDTO.getFrom(),generateReportDTO.getTo(),generateReportDTO.getRangeFrequency(),generateReportDTO.getDepartment_id(),generateReportDTO.getRegion_id(),generateReportDTO.getStatus());
     }
 }
