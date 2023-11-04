@@ -21,13 +21,16 @@ public class MockTicketService implements ExternalTicketService {
     private static List<Department> departments;
     private static List<Region> regions;
     private static List<User> redressors;
-
+    private static List<User> admins;
+    private static List<User> users;
     @Override
     public List<Ticket> getTickets() {
         List<Ticket> tickets = new ArrayList<>();
-        createRandomDepartments(5);
-        createRandomRegions(5);
-        createRandomRedressors(5);
+        createRandomDepartments();
+        createRandomRegions();
+        createRandomRedressors();
+        createRandomAdmins();
+        createRandomUsers();
         for(int i=0;i<100;i++){
             tickets.add(createRandomOpenTicket());
         }
@@ -37,7 +40,7 @@ public class MockTicketService implements ExternalTicketService {
         return tickets;
     }
 
-    public static void createRandomDepartments(int n){
+    public static void createRandomDepartments(){
         departments = new ArrayList<>();
 //        for(int i=0;i<n;i++)
 //            departments.add(new Department(UUID.randomUUID(),Faker.instance().commerce().department()));
@@ -47,7 +50,7 @@ public class MockTicketService implements ExternalTicketService {
         departments.add(new Department(UUID.fromString("e2b0ac51-50ab-4794-bd1d-35d5b4d15c41"),"Industrial"));
         departments.add(new Department(UUID.fromString("606967f2-26c5-42d1-a043-d5bef5ecda8d"),"Automotive"));
     }
-    public static void createRandomRegions(int n){
+    public static void createRandomRegions(){
         regions = new ArrayList<>();
 //        for(int i=0;i<n;i++)
 //            regions.add(new Region(UUID.randomUUID(),Faker.instance().address().cityName()));
@@ -57,10 +60,33 @@ public class MockTicketService implements ExternalTicketService {
         regions.add(new Region(UUID.fromString("382e4cdf-7e39-4635-960c-cdb03408ea63"),"North Octaviotown"));
         regions.add(new Region(UUID.fromString("f633bfea-bb6b-4a0e-b3f6-938681bc3d79"),"Koelpinbury"));
     }
-    public static void createRandomRedressors(int n){
+    public static void createRandomRedressors(){
         redressors = new ArrayList<>();
-        for(int i=0;i<n;i++)
-            redressors.add(mockUserService.createRandomUser());
+        for(int i=0;i<3;i++)
+            redressors.add(mockUserService.createRandomRedressor());
+
+        redressors.get(0).setUser_id(UUID.fromString("e538ebdd-37d9-4f66-a21b-f54fd7026ea8"));
+        redressors.get(1).setUser_id(UUID.fromString("617ac0ad-99e6-4807-9a43-c4c1aab5590d"));
+        redressors.get(2).setUser_id(UUID.fromString("8715a2e3-aaad-4a87-a006-370271813954"));
+    }
+    public static void createRandomAdmins(){
+        admins = new ArrayList<>();
+        for(int i=0;i<2;i++)
+            admins.add(mockUserService.createRandomAdmin());
+
+        admins.get(0).setUser_id(UUID.fromString("5ed94f67-097b-49ca-b579-b5c8afeaee7a"));
+        admins.get(1).setUser_id(UUID.fromString("38443a5a-00c8-4c8e-a2f9-48d3d125a9f1"));
+    }
+    public static void createRandomUsers(){
+        users = new ArrayList<>();
+        for(int i=0;i<5;i++){
+            users.add(mockUserService.createRandomUser());
+        }
+        users.get(0).setUser_id(UUID.fromString("a90597af-6867-457e-b7c5-a2e72b0c9dd6"));
+        users.get(1).setUser_id(UUID.fromString("ddcf2b69-e14e-4185-b00f-2d8ac465d4bd"));
+        users.get(2).setUser_id(UUID.fromString("be6318d5-4035-4a2f-97ea-231cf1db71eb"));
+        users.get(3).setUser_id(UUID.fromString("54117b13-c044-4ffc-a97d-26b7a9431383"));
+        users.get(4).setUser_id(UUID.fromString("dcf2e361-2ab0-4aa7-b743-f8db62a2100b"));
     }
     public static Ticket createRandomResolvedTicket() {
         Ticket ticket = new Ticket();
