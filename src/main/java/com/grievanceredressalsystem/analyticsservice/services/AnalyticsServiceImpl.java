@@ -4,6 +4,8 @@ import com.grievanceredressalsystem.analyticsservice.mock.models.Ticket;
 import com.grievanceredressalsystem.analyticsservice.mock.models.TicketStatus;
 import com.grievanceredressalsystem.analyticsservice.models.MetricType;
 import com.grievanceredressalsystem.analyticsservice.models.RangeFrequency;
+import com.grievanceredressalsystem.analyticsservice.models.Report;
+import com.grievanceredressalsystem.analyticsservice.repositories.ReportRepository;
 import com.grievanceredressalsystem.analyticsservice.utils.StringDateComparator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,11 +26,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class AnalyticsServiceImpl implements AnalyticsService{
-    public AnalyticsServiceImpl(@Qualifier("externalTicketService") ExternalTicketService ticketService) {
+    public AnalyticsServiceImpl(@Qualifier("externalTicketService") ExternalTicketService ticketService,ReportRepository reportRepository) {
         this.ticketService = ticketService;
+        this.reportRepository = reportRepository;
     }
 
     private ExternalTicketService ticketService;
+    private ReportRepository reportRepository;
 
     private static boolean isDateInRange(Date date , Date startDate , Date endDate){
         return date.after(startDate) && date.before(endDate);
@@ -198,6 +202,11 @@ public class AnalyticsServiceImpl implements AnalyticsService{
         FileOutputStream out = new FileOutputStream(file);
         workbook.write(out);
         out.close();
+        Report report = new Report();
+        report.setMetricType(metricType);
+        report.setGenerated_at(now);
+        report.setReport_url(filepath);
+        reportRepository.save(report);
         ResponseEntity<String> responseEntity = new ResponseEntity<>(filepath, HttpStatus.OK);
         return responseEntity;
     }

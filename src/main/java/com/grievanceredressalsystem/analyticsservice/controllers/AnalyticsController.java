@@ -6,7 +6,9 @@ import com.grievanceredressalsystem.analyticsservice.mock.models.Region;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Ticket;
 import com.grievanceredressalsystem.analyticsservice.mock.models.TicketStatus;
 import com.grievanceredressalsystem.analyticsservice.models.RangeFrequency;
+import com.grievanceredressalsystem.analyticsservice.models.Report;
 import com.grievanceredressalsystem.analyticsservice.services.AnalyticsService;
+import com.grievanceredressalsystem.analyticsservice.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,9 @@ import java.util.UUID;
 public class AnalyticsController {
     @Autowired
     private AnalyticsService analyticsService;
+
+    @Autowired
+    private ReportService reportService;
     @GetMapping
     public ResponseEntity<String> hello(){
         ResponseEntity<String> responseEntity = new ResponseEntity("API works", HttpStatus.OK);
@@ -45,5 +50,9 @@ public class AnalyticsController {
     @PostMapping("/generate-report")
     public ResponseEntity<String> generateReport(@RequestBody GenerateReportDTO generateReportDTO) throws IOException {
         return analyticsService.generateReport(generateReportDTO.getMetricType(),generateReportDTO.getFrom(),generateReportDTO.getTo(),generateReportDTO.getRangeFrequency(),generateReportDTO.getDepartment_id(),generateReportDTO.getRegion_id(),generateReportDTO.getStatus());
+    }
+    @GetMapping("/reports")
+    public List<Report> getAllReports(){
+        return reportService.getAllReports();
     }
 }
