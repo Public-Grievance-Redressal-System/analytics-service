@@ -8,6 +8,7 @@ import com.grievanceredressalsystem.analyticsservice.mock.models.TicketStatus;
 import com.grievanceredressalsystem.analyticsservice.models.RangeFrequency;
 import com.grievanceredressalsystem.analyticsservice.models.Report;
 import com.grievanceredressalsystem.analyticsservice.services.AnalyticsService;
+import com.grievanceredressalsystem.analyticsservice.services.AuthenticationService;
 import com.grievanceredressalsystem.analyticsservice.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,6 +32,8 @@ public class AnalyticsController {
     private AnalyticsService analyticsService;
 
     @Autowired
+    private AuthenticationService authenticationService;
+    @Autowired
     private ReportService reportService;
     @GetMapping
     public ResponseEntity<String> hello(){
@@ -38,17 +41,20 @@ public class AnalyticsController {
         return responseEntity;
     }
     @GetMapping("/metrics/tickets")
-    public Map<String, Long> fetchTickets(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id, @RequestParam TicketStatus status){
+    public Map<String, Long> fetchTickets(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id, @RequestParam TicketStatus status,@RequestHeader String Authorization) throws Exception {
+        authenticationService.authenticate(Authorization,department_id,region_id);
         return analyticsService.getTicketsBasedOnStatus(from,to,rangeFrequency,department_id,region_id,status);
     }
 
     @GetMapping("/metrics/average-resolution-time")
-    public Map<String, Double> fetchAverageResolutionTime(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id){
+    public Map<String, Double> fetchAverageResolutionTime(@RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date from, @RequestParam @DateTimeFormat(pattern="ddMMyyyy") Date to, @RequestParam RangeFrequency rangeFrequency, @RequestParam(required = false) UUID department_id, @RequestParam(required = false) UUID region_id,@RequestHeader String Authorization) throws Exception {
+        authenticationService.authenticate(Authorization,department_id,region_id);
         return analyticsService.getAverageResolutionTime(from,to,rangeFrequency,department_id,region_id);
     }
 
     @PostMapping("/generate-report")
-    public ResponseEntity<String> generateReport(@RequestBody GenerateReportDTO generateReportDTO) throws IOException {
+    public ResponseEntity<String> generateReport(@RequestBody GenerateReportDTO generateReportDTO,@RequestHeader String Authorization) throws Exception {
+        authenticationService.authenticate(Authorization,generateReportDTO.getDepartment_id(),generateReportDTO.getRegion_id());
         return analyticsService.generateReport(generateReportDTO.getMetricType(),generateReportDTO.getFrom(),generateReportDTO.getTo(),generateReportDTO.getRangeFrequency(),generateReportDTO.getDepartment_id(),generateReportDTO.getRegion_id(),generateReportDTO.getStatus());
     }
     @GetMapping("/reports")

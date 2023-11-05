@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-@Service
+@Service("mockRegionService")
 public class MockRegionService {
     private static List<Region> regions;
-    public static void createRandomRegions(int n){
+    public void createRandomRegions(){
         regions = new ArrayList<>();
 //        for(int i=0;i<n;i++)
 //            regions.add(new Region(UUID.randomUUID(),Faker.instance().address().cityName()));

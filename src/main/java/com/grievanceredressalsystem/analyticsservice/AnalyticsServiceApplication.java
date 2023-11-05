@@ -1,5 +1,7 @@
 package com.grievanceredressalsystem.analyticsservice;
 
+import com.grievanceredressalsystem.analyticsservice.mock.services.MockService;
+import com.grievanceredressalsystem.analyticsservice.mock.services.MockTicketService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

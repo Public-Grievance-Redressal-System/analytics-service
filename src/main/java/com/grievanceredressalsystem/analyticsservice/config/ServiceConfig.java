@@ -13,7 +13,7 @@ public class ServiceConfig {
     @Profile("development")
     @Bean("externalTicketService")
     public ExternalTicketService externalTicketService() {
-        return new MockTicketService(new MockUserService());
+        return new MockTicketService();
     }
     @Bean
     public ExternalUserService externalUserService() {

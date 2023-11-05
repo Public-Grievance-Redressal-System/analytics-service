@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-@Service
+@Service("mockDepartmentService")
 public class MockDepartmentService {
     private static List<Department> departments;
-
-    public static void createRandomDepartments(int n){
+    public void createRandomDepartments(){
         departments = new ArrayList<>();
 //        for(int i=0;i<n;i++)
 //            departments.add(new Department(UUID.randomUUID(),Faker.instance().commerce().department()));

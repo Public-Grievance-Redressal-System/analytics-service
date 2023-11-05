@@ -2,16 +2,18 @@ package com.grievanceredressalsystem.analyticsservice.mock.services;
 
 import com.grievanceredressalsystem.analyticsservice.mock.models.Department;
 import com.grievanceredressalsystem.analyticsservice.mock.models.Role;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+@Service("mockRoleService")
 public class MockRoleService {
     private static List<Role> roles;
 
-    public static void createRandomRoles(int n){
+    public void createRandomRoles(){
         roles = new ArrayList<>();
 //        for(int i=0;i<n;i++)
 //            roles.add(new Role(UUID.randomUUID(),Faker.instance().commerce().department()));
