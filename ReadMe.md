@@ -4,23 +4,14 @@ Analytics Service for a Public Grievance Redressal System.
 
 ## Table of Contents
 
-- [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Endpoints](#endpoints)
 - [Authentication](#authentication)
-- [Testing](#testing)
 
-## Getting Started
-
-To run this API locally, you'll need [list prerequisites]. Follow these steps to get started:
-
-1. [Installation instructions]
-2. [Configuration steps]
-3. [Running the API]
 
 ## Usage
 
-Here's how you can use this API to [describe a common use case]:
+Here's how you can use this API for [a more nuanced analysis of grievances data by employing various metrics and parameters.]:
 
 
 ## Endpoints
