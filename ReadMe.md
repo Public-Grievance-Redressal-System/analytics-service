@@ -125,8 +125,24 @@ Content-Type: application/json
 ```
 ## Authentication
 
-This API uses [type of authentication], and you can set it up by following these steps:
-1. [Authentication setup instructions]
-2. [How to include authentication headers in requests]
+This API requires authentication using a Bearer token. The token should be included in the `Authorization` header for every API request.
 
+### Authentication Setup Instructions
+
+To set up authentication for this API, follow these steps:
+1. This API assumes api calls will be made by a Signed-in user. 
+2. Obtain an authentication token from the authentication provider (Login API maintained through User Service).
+3. Copy the token for use in API requests.
+
+### Including Authentication Headers in Requests
+
+For every API request, include the authentication token in the `Authorization` header with the format `Bearer "token"`.
+
+**Example Request with Authentication Header:**
+
+```http
+```http
+GET /api/v1/analytics/reports
+Authorization: Bearer your_authentication_token
+```
 
