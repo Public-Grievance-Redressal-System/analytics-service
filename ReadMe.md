@@ -141,7 +141,6 @@ For every API request, include the authentication token in the `Authorization` h
 **Example Request with Authentication Header:**
 
 ```http
-```http
 GET /api/v1/analytics/reports
 Authorization: Bearer your_authentication_token
 ```
