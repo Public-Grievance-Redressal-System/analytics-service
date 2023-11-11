@@ -11,7 +11,7 @@ Analytics Service for a Public Grievance Redressal System.
 
 ## Usage
 
-Here's how you can use this API for [a more nuanced analysis of grievances data by employing various metrics and parameters.]:
+Here's how you can use this API for a more nuanced analysis of grievances data by employing various metrics and parameters.:
 
 
 ## Endpoints
