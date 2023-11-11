@@ -105,7 +105,8 @@ This endpoint allows you to fetch a list of reports.
 GET /api/v1/analytics/reports
 ```
 **Response:**
-
+```http
+Content-Type: application/json
 [
 {
 "generated_by": "some_uuid",
@@ -121,7 +122,7 @@ GET /api/v1/analytics/reports
 },
 // Additional reports...
 ]
-
+```
 ## Authentication
 
 This API uses [type of authentication], and you can set it up by following these steps:
